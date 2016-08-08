@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -8,8 +9,11 @@ namespace BugTracker.Models
     public class Project
     {
         public int Id { get; set; }
-        public int Name { get; set; }
-        public int Description { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        [StringLength(200, ErrorMessage = "Description must be less than 200 characters")]
+        public string Description { get; set; }
 
         public Project()
         {
