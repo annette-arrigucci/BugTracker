@@ -7,7 +7,7 @@
 <h2>My Projects</h2>
 
 <p>
-    @if(User.IsInRole("Admin"))
+    @if(User.IsInRole("Admin") || User.IsInRole("Project Manager"))
     {
         @Html.ActionLink("Create New", "Create")
     }
@@ -32,7 +32,7 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
-            @if (User.IsInRole("Admin"))
+            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
             {
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                 @Html.Raw(" | ")
