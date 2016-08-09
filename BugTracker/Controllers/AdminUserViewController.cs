@@ -17,69 +17,77 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: AdminUserView
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            UserRolesHelper helper = new UserRolesHelper(db);
-            var userRoles = new HashSet<AdminUserViewModel>();
+            var userRoles = new List<AdminUserViewModel>();
             foreach(ApplicationUser user in db.Users)
             {
                 var myUser = new AdminUserViewModel();
+                UserRolesHelper helper = new UserRolesHelper();
                 myUser.UserId = user.Id;
+                myUser.UserName = user.FirstName + " " + user.LastName;
+                myUser.FirstName = user.FirstName;
+                myUser.LastName = user.LastName;
                 myUser.UserEmail = user.Email;
-                myUser.RolesList = helper.ListUserRoles(user.Id).ToString();
+                myUser.CurrentRoles = helper.ListUserRoles(user.Id);
                 userRoles.Add(myUser);
             }
-            return View(userRoles);
+            var sortedUsers = userRoles.OrderBy(x => x.LastName).ThenBy(p => p.FirstName).ToList();
+            return View(sortedUsers);
         }
         //get method
         [Authorize(Roles = "Admin")]
-        public ActionResult EditUser(string id)
+        public ActionResult Edit(string id)
         {
             var user = db.Users.Find(id);
             AdminUserViewModel AdminModel = new AdminUserViewModel();
-            UserRolesHelper helper = new UserRolesHelper(db);
+            UserRolesHelper helper = new UserRolesHelper();
             var selected = helper.ListUserRoles(id);
             AdminModel.Roles = new MultiSelectList(db.Roles, "Name", "Name", selected);
             AdminModel.UserId = user.Id;
+            AdminModel.UserName = user.FirstName + " " + user.LastName;
+            AdminModel.UserEmail = user.Email;
 
             return View(AdminModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUser([Bind(Include = "UserId,SelectedRoles")] AdminUserViewModel admModel)
+        public ActionResult Edit([Bind(Include = "UserId,SelectedRoles")] AdminUserViewModel admModel)
         {
             var user = db.Users.Find(admModel.UserId);
             var id = admModel.UserId;
-            UserRolesHelper helper = new UserRolesHelper(db);
-            var allRoles = new HashSet<string>();
+            var allRoles = new List<string>();
+            UserRolesHelper helper = new UserRolesHelper();
+   
+            allRoles.Add("Submitter");
+            allRoles.Add("Developer");
+            allRoles.Add("Project Manager");
+            allRoles.Add("Admin");
 
-            foreach (var role in db.Roles)
+            if (admModel.SelectedRoles != null)
             {
-                var myRole = role.ToString();
-                allRoles.Add(myRole);
-            }
-
-                if (admModel.SelectedRoles != null)
+                foreach (var sRole in admModel.SelectedRoles)
                 {
-                    var rolesToRemove = allRoles.Except(admModel.SelectedRoles);
-                //foreach(var role in db.Roles)
-                //{
-                //    if (helper.IsUserInRole(id, myRole))
-                //    {
-
-                //    }
-                    //var myRole = role.ToString();
-                    //if(!helper.IsUserInRole(id, myRole))
-                    //{
-                    //    helper.AddUserToRole(id, myRole);
-                    //}
+                    if (!helper.IsUserInRole(admModel.UserId, sRole))
+                    {
+                        helper.AddUserToRole(admModel.UserId, sRole);
+                    }
                 }
+
+               var rolesToRemove = allRoles.Except(admModel.SelectedRoles);
+               foreach(var rRole in rolesToRemove)
+                {
+                    if (helper.IsUserInRole(admModel.UserId, rRole))
+                    {
+                        helper.RemoveUserFromRole(admModel.UserId, rRole);
+                    }
+                }
+                return RedirectToAction("Index");
             }
 
-            return View(AdminModel);
+            return RedirectToAction("Index");
         }
-
-
     }
 }

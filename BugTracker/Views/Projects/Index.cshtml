@@ -44,3 +44,10 @@
 }
 
 </table>
+
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Manage User Roles", "Index", "AdminUserView", null, null)
+    }
+</p>

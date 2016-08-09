@@ -14,11 +14,12 @@ namespace BugTracker.Helpers
         private UserManager<ApplicationUser> userManager;
         private RoleManager<IdentityRole> roleManager;
 
-        public UserRolesHelper(ApplicationDbContext context)
+        public UserRolesHelper()
         {
-            this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            this.roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-            this.db = context;
+            this.db = new ApplicationDbContext();
+            this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            this.roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+            this.db = new ApplicationDbContext();
         }
 
         public bool IsUserInRole(string userId, string roleName)
