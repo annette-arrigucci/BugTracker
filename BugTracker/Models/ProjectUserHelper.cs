@@ -11,10 +11,12 @@ namespace BugTracker.Models
     public class ProjectUserHelper
     {
         private ApplicationDbContext db;
+        private UserManager<ApplicationUser> userManager;
 
         public ProjectUserHelper()
         {
             this.db = new ApplicationDbContext();
+            this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
         }
         public bool IsUserInProject(string userId, int projectId)
         {
@@ -94,6 +96,19 @@ namespace BugTracker.Models
                 return false;
             }
         }
+        //this returns a list of UserIDs associated with a project
+        public IList<string> UsersInProject(int projectId)
+        {
+            //var userQuery = db.ProjectUsers.Where(p => p.ProjectId == projectId);
+            var query = from p in db.ProjectUsers
+                        where p.ProjectId == projectId
+                        select p.UserId;
 
-    }
+            var usersList = new List<string>();
+            foreach(var u in query)
+            {
+                usersList.Add(u);
+            }
+            return usersList;
+        }
 }
