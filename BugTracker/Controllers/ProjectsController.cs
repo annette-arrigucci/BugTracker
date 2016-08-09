@@ -24,13 +24,20 @@ namespace BugTracker.Controllers
             var id = User.Identity.GetUserId();
             if (User.IsInRole("Admin"))
             {
-                return View(db.Projects.ToList());
+                var myList = db.Projects.ToList();
+                return View(quickReverse(db.Projects.ToList()));
             }
             else
             {
                 var projects = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
-                return View(projects.ToList());
+                return View(quickReverse(projects.ToList()));
             }
+        }
+
+        public List<Project> quickReverse(List<Project> oldList)
+        {
+            oldList.Reverse();
+            return oldList;
         }
 
         // GET: Projects/Details/5
