@@ -29,10 +29,17 @@
                 @Html.DisplayFor(modelItem => item.UserEmail)
             </td>
             <td>
-                @foreach(var role in item.CurrentRoles)
+                @if (item.CurrentRoles == null || item.CurrentRoles.Count == 0 )
                 {
-                    @Html.Raw(role)
-                    @Html.Raw("<br>")
+                    @Html.Raw("None assigned")
+                }
+                else
+                {
+                    foreach (var role in item.CurrentRoles)
+                    {
+                        @Html.Raw(role)
+                        @Html.Raw("<br>")
+                    }
                 }
                 @*@Html.DisplayFor(modelItem => item.RolesList)*@
             </td>

@@ -66,7 +66,19 @@ namespace BugTracker.Controllers
             allRoles.Add("Project Manager");
             allRoles.Add("Admin");
 
-            if (admModel.SelectedRoles != null)
+            //if no roles have been selected, remove user from all roles
+            if (admModel.SelectedRoles == null)
+            {
+                foreach (var rRole in allRoles)
+                {
+                    if (helper.IsUserInRole(admModel.UserId, rRole))
+                    {
+                        helper.RemoveUserFromRole(admModel.UserId, rRole);
+                    }
+                }
+                return RedirectToAction("Index");
+            }   
+            else
             {
                 foreach (var sRole in admModel.SelectedRoles)
                 {
@@ -85,9 +97,7 @@ namespace BugTracker.Controllers
                     }
                 }
                 return RedirectToAction("Index");
-            }
-
-            return RedirectToAction("Index");
+            }         
         }
     }
 }
