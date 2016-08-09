@@ -19,7 +19,6 @@ namespace BugTracker.Helpers
             this.db = new ApplicationDbContext();
             this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
             this.roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
-            this.db = new ApplicationDbContext();
         }
 
         public bool IsUserInRole(string userId, string roleName)
