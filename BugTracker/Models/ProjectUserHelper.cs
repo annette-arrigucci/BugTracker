@@ -22,7 +22,7 @@ namespace BugTracker.Models
         {
             var query1 = db.ProjectUsers.Where(c => c.ProjectId == projectId);
             var query2 = query1.Where(u => u.UserId.Equals(userId));
-            if(query2.ToList().Count > 0 )
+            if (query2.ToList().Count > 0)
             {
                 return true;
             }
@@ -31,25 +31,26 @@ namespace BugTracker.Models
                 return false;
             }
         }
-        public IList<string> ListUserProjects(string userId)
+        //get a list of all Projects a user is assigned to
+        public List<Project> ListUserProjects(string userId)
         {
             var projQuery = db.ProjectUsers.Where(u => u.UserId.Equals(userId));
             var projList = projQuery.ToList();
-            var projectsList = new List<string>();
+            var projectsList = new List<Project>();
 
             if (projList.Count > 0)
-            {   
+            {
                 foreach (var project in projList)
                 {
                     //var titleQuery = db.Projects.Where(p => p.Id.Equals(project));
                     var query = from p in db.Projects
                                 where p.Id == project.Id
-                                select p.Name;
+                                select p;
                     foreach (var a in query)
                     {
                         projectsList.Add(a);
                     }
-                }  
+                }
             }
             return projectsList;
         }
@@ -97,7 +98,7 @@ namespace BugTracker.Models
             }
         }
         //this returns a list of UserIDs associated with a project
-        public IList<string> UsersInProject(int projectId)
+        public List<string> UsersInProject(int projectId)
         {
             //var userQuery = db.ProjectUsers.Where(p => p.ProjectId == projectId);
             var query = from p in db.ProjectUsers
@@ -105,10 +106,25 @@ namespace BugTracker.Models
                         select p.UserId;
 
             var usersList = new List<string>();
-            foreach(var u in query)
+            foreach (var u in query)
             {
                 usersList.Add(u);
             }
             return usersList;
         }
+        //this returns a list of UserIDs not linked with a project
+        public List<string> UsersNotInProject(int projectId)
+        {
+            var query = from p in db.ProjectUsers
+                        where p.ProjectId != projectId
+                        select p.UserId;
+
+            var usersList = new List<string>();
+            foreach (var u in query)
+            {
+                usersList.Add(u);
+            }
+            return usersList;
+        }
+    }
 }
