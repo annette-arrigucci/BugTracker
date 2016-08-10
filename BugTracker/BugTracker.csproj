@@ -286,10 +286,10 @@
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\AdminUserView\Index.cshtml" />
     <Content Include="Views\AdminUserView\Edit.cshtml" />
+    <Content Include="Views\ProjectUserView\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\ProjectUserView\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
