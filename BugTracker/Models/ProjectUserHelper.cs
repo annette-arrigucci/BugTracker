@@ -115,16 +115,31 @@ namespace BugTracker.Models
         //this returns a list of UserIDs not linked with a project
         public List<string> UsersNotInProject(int projectId)
         {
-            var query = from p in db.ProjectUsers
-                        where p.ProjectId != projectId
-                        select p.UserId;
+            var usersList = UsersInProject(projectId);
+            var allUsers = new List<string>();
 
-            var usersList = new List<string>();
-            foreach (var u in query)
+            //make a list of userIds of every user in the database
+            foreach (var user in db.Users)
             {
-                usersList.Add(u);
+                allUsers.Add(user.Id);
             }
-            return usersList;
+            var notList = allUsers.Except(usersList);
+            var notStrings = new List<string>();
+
+            foreach(var u in notList)
+            {
+                notStrings.Add(u.ToString());
+            }
+            return notStrings;
+            //var query = from p in db.ProjectUsers
+            //            where p.ProjectId != projectId
+            //            select p.UserId;
+
+            //var usersList = new List<string>();
+            //foreach (var u in query)
+            //{
+            //    usersList.Add(u);
+            //}
         }
     }
 }

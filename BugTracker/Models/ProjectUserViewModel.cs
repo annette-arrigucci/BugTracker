@@ -13,7 +13,7 @@ namespace BugTracker.Models
         public int ProjectId { get; set; }
         public MultiSelectList UsersAssignedtoProject { get; set; }
         public MultiSelectList UsersNotAssignedToProject { get; set; }
-        public string[] SelectedUsers { get; set; }
-        public string[] NotSelectedUsers { get; set; }
+        public string[] UsersToAdd { get; set; }
+        public string[] UsersToRemove { get; set; }
     }
 }
