@@ -9,6 +9,7 @@ namespace BugTracker.Models
 {
     public class ProjectUserViewModel
     {
+        [Display(Name ="Project Name")]
         public string ProjectName { get; set; }
         public int ProjectId { get; set; }
         public MultiSelectList UsersAssignedtoProject { get; set; }
