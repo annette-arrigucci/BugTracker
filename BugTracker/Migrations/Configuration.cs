@@ -4,6 +4,7 @@ namespace BugTracker.Migrations
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
+    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
@@ -102,6 +103,35 @@ namespace BugTracker.Migrations
 
             var userId4 = userManager.FindByEmail("annette.arrigucci@gmail.com").Id;
             userManager.AddToRole(userId4, "Submitter");
+
+            //seed my ticket statuses, ticket priorities and ticket types
+            List<string> statusList = new List<string> { "Waiting for support", "Waiting for customer", "Resolved", "On hold"};
+            foreach (var status in statusList)
+            {
+                var ts = new TicketStatus();
+                ts.Name = status;
+                context.TicketStatuses.Add(ts);
+                context.SaveChanges();
+            }
+
+            List<string> priorityList = new List<string> { "High", "Medium", "Low", "Critical" };
+            foreach (var priority in priorityList)
+            {
+                var tp = new TicketPriority();
+                tp.Name = priority;
+                context.TicketPriorities.Add(tp);
+                context.SaveChanges();
+            }
+
+            List<string> ticketTypes = new List<string> { "Error report", "Feature request", "Service request", "Other" };
+            foreach (var type in ticketTypes)
+            {
+                var tt = new TicketType();
+                tt.Name = type;
+                context.TicketTypes.Add(tt);
+                context.SaveChanges();
+            }
+
         }
     }
 }
