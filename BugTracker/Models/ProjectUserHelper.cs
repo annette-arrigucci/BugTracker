@@ -141,5 +141,25 @@ namespace BugTracker.Models
             //    usersList.Add(u);
             //}
         }
+        public List<UserInfoViewModel> getUserInfo(List<string> userIds)
+        {
+            //set up a list to contain user info objects
+            var userInfoList = new List<UserInfoViewModel>();
+
+            foreach (var userId in userIds)
+            {
+                var myUser = new UserInfoViewModel();
+                myUser.UserId = userId;
+                var appUser = db.Users.Find(userId);
+                myUser.FirstName = appUser.FirstName;
+                myUser.LastName = appUser.LastName;
+                myUser.Email = appUser.Email;
+                myUser.UserName = myUser.FirstName + " " + myUser.LastName;
+                var myUserHelper = new UserRolesHelper();
+                myUser.CurrentRoles = myUserHelper.ListUserRoles(userId);
+                userInfoList.Add(myUser);
+            }
+            return userInfoList;
+        }
     }
 }
