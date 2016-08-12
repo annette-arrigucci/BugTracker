@@ -17,10 +17,10 @@ namespace BugTracker.Models
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset? Updated { get; set; }
-        public int ProjectId { get; set; }
-        public int TicketTypeId { get; set; }
-        public int TicketPriorityId { get; set; }
-        public int TicketStatusId { get; set; }
+        //public int ProjectId { get; set; }
+        //public int TicketTypeId { get; set; }
+        //public int TicketPriorityId { get; set; }
+        //public int TicketStatusId { get; set; }
         public string OwnerUserId { get; set; }
         public string AssignedToUserId { get; set; }
 
@@ -30,7 +30,7 @@ namespace BugTracker.Models
         public SelectList TicketTypes { get; set; }
         [Display(Name = "Priority")]
         public SelectList TicketPriorities { get; set; }
-        [Display(Name = "Priority")]
+        [Display(Name = "Status")]
         public SelectList TicketStatuses { get; set; }
         //public SelectList TicketStatuses { get; set; }
 

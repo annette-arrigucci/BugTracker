@@ -96,19 +96,21 @@ namespace BugTracker.Controllers
                 ticketEdit.Created = ticket.Created;
                 ticketEdit.Updated = ticket.Updated;
                 ticketEdit.Description = ticket.Description;
-                ticketEdit.ProjectId = ticket.ProjectId;
-                ticketEdit.TicketTypeId = ticket.TicketTypeId;
-                ticketEdit.TicketPriorityId = ticket.TicketPriorityId;
-                ticketEdit.TicketStatusId = ticket.TicketStatusId;
+                
+                //setting the default selected values of the TicketEditViewModel to the current values in the ticket
+                ticketEdit.SelectedProject = ticket.ProjectId;
+                ticketEdit.SelectedType = ticket.TicketTypeId;
+                ticketEdit.SelectedPriority = ticket.TicketPriorityId;
+                ticketEdit.SelectedStatus = ticket.TicketStatusId;
                 ticketEdit.OwnerUserId = ticket.OwnerUserId;
                 ticketEdit.AssignedToUserId = ticket.AssignedToUserId;
 
-                ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.ProjectId);
-                ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.TicketTypeId);
-                ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.TicketPriorityId);
-                ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.TicketStatusId);
+                ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
+                ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
+                ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.SelectedPriority);//ticket.TicketPriorityId
+                ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.SelectedStatus);//ticket.TicketStatusId
 
-                return View(ticket);
+                return View(ticketEdit);
             }
             
         }
@@ -118,7 +120,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId")] TicketEditViewModel tevModel)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,SelectedProject,SelectedType,SelectedPriority,SelectedStatus,OwnerUserId,AssignedToUserId")] TicketEditViewModel tevModel)
         {
             if (ModelState.IsValid)
             {
