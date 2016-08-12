@@ -36,6 +36,63 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
+
+        // GET: Tickets/AssignUser/5
+        [Authorize(Roles ="Admin, Project Manager")]
+        public ActionResult AssignUser(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Ticket ticket = db.Tickets.Find(id);
+            var model = new TicketAssignViewModel();
+            model.Ticket = ticket;
+            if(!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+                model.SelectedUser = ticket.AssignedToUserId;
+            }
+            var helper = new ProjectUserHelper();
+            var userIDList = helper.UsersInProject(ticket.ProjectId);
+            var userInfoList = helper.getUserInfo(userIDList);
+            if (!string.IsNullOrEmpty(model.SelectedUser))
+            {
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
+            }
+            else
+            {
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName");
+            }
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+        // POST: Tickets/AssignUser/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignUser([Bind(Include = "Ticket,SelectedUser")] TicketAssignViewModel tavModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var id = tavModel.Ticket.Id;
+                var selected = tavModel.SelectedUser;
+                var ticket = db.Tickets.Find(id);
+                ticket.AssignedToUserId = selected;
+                var tn = new TicketNotification { TicketId = id, UserId = selected };
+
+                db.TicketNotifications.Add(tn);
+                db.Entry(ticket).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(tavModel);
+            }
+        }
         // GET: Tickets/Create
         [Authorize]
         public ActionResult Create()

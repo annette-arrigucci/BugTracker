@@ -141,6 +141,7 @@ namespace BugTracker.Models
             //    usersList.Add(u);
             //}
         }
+        //returns a list of objects with information about a list of users given their user IDs
         public List<UserInfoViewModel> getUserInfo(List<string> userIds)
         {
             //set up a list to contain user info objects
