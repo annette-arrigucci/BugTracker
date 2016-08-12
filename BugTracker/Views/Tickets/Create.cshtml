@@ -1,4 +1,4 @@
-﻿@model BugTracker.Models.TicketViewModel
+﻿@model BugTracker.Models.TicketCreateViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -30,22 +30,6 @@
             </div>
         </div>
 
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.Created, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Created, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Created, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.Updated, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Updated, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Updated, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
         <div class="form-group">
             @Html.LabelFor(model => model.Projects, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -58,7 +42,6 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TicketTypes, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("SelectedType", Model.TicketTypes, "-Select Type-")*@
                 @Html.DropDownListFor(m => m.SelectedType, Model.TicketTypes, "-Select Type-")
                 @Html.ValidationMessageFor(model => model.SelectedType, "", new { @class = "text-danger" })
             </div>
@@ -67,35 +50,10 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TicketPriorities, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("SelectedPriority", Model.TicketPriorities, "-Select Priority-")*@
                 @Html.DropDownListFor(m => m.SelectedPriority, Model.TicketPriorities, "-Select Priority-")
                 @Html.ValidationMessageFor(model => model.SelectedPriority, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.TicketStatuses, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SelectedStatus", Model.TicketStatuses)
-                @Html.ValidationMessageFor(model => model.TicketStatuses, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.OwnerUserId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.OwnerUserId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OwnerUserId, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.AssignedToUserId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AssignedToUserId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AssignedToUserId, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

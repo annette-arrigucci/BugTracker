@@ -40,7 +40,7 @@ namespace BugTracker.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            var ticketView = new TicketViewModel();
+            var ticketView = new TicketCreateViewModel();
             ticketView.Projects = new SelectList(db.Projects, "Id", "Name");
             ticketView.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name");
             ticketView.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name");
@@ -53,7 +53,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketViewModel tvm)
+        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketCreateViewModel tvm)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,29 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(ticket);
+            else
+            {
+                var ticketEdit = new TicketEditViewModel();
+                ticketEdit.Id = ticket.Id;
+                ticketEdit.Title = ticket.Title;
+                ticketEdit.Created = ticket.Created;
+                ticketEdit.Updated = ticket.Updated;
+                ticketEdit.Description = ticket.Description;
+                ticketEdit.ProjectId = ticket.ProjectId;
+                ticketEdit.TicketTypeId = ticket.TicketTypeId;
+                ticketEdit.TicketPriorityId = ticket.TicketPriorityId;
+                ticketEdit.TicketStatusId = ticket.TicketStatusId;
+                ticketEdit.OwnerUserId = ticket.OwnerUserId;
+                ticketEdit.AssignedToUserId = ticket.AssignedToUserId;
+
+                ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.ProjectId);
+                ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.TicketTypeId);
+                ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.TicketPriorityId);
+                ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.TicketStatusId);
+
+                return View(ticket);
+            }
+            
         }
 
         // POST: Tickets/Edit/5
@@ -96,15 +118,27 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId")] TicketEditViewModel tevModel)
         {
             if (ModelState.IsValid)
             {
+                Ticket ticket = db.Tickets.Find(tevModel.Id);
+                ticket.Title = tevModel.Title;
+                ticket.Description = tevModel.Description;
+                ticket.Created = tevModel.Created;
+                ticket.Updated = DateTimeOffset.Now;
+                ticket.ProjectId = tevModel.SelectedProject;
+                ticket.TicketTypeId = tevModel.SelectedType;
+                ticket.TicketPriorityId = tevModel.SelectedPriority;
+                ticket.TicketStatusId = tevModel.SelectedStatus;
+                ticket.OwnerUserId = tevModel.OwnerUserId;
+                ticket.AssignedToUserId = tevModel.AssignedToUserId;
+
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(ticket);
+            return View(tevModel);
         }
 
         // GET: Tickets/Delete/5
