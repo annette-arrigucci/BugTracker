@@ -22,6 +22,7 @@ namespace BugTracker.Models
         //public int TicketPriorityId { get; set; }
         //public int TicketStatusId { get; set; }
         public string OwnerUserId { get; set; }
+        [Display(Name = "Assigned to")]
         public string AssignedToUserId { get; set; }
 
         [Display(Name = "Project")]
