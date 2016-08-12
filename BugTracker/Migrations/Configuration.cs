@@ -105,31 +105,40 @@ namespace BugTracker.Migrations
             userManager.AddToRole(userId4, "Submitter");
 
             //seed my ticket statuses, ticket priorities and ticket types
-            List<string> statusList = new List<string> { "Waiting for support", "Waiting for customer", "Resolved", "On hold"};
+            List<string> statusList = new List<string> { "New", "Waiting for support", "Waiting for customer", "Resolved", "On hold"};
             foreach (var status in statusList)
             {
-                var ts = new TicketStatus();
-                ts.Name = status;
-                context.TicketStatuses.Add(ts);
-                context.SaveChanges();
+                if (!context.TicketStatuses.Any(r => r.Name == status))
+                {
+                    var ts = new TicketStatus();
+                    ts.Name = status;
+                    context.TicketStatuses.Add(ts);
+                    context.SaveChanges();
+                }
             }
 
             List<string> priorityList = new List<string> { "High", "Medium", "Low", "Critical" };
             foreach (var priority in priorityList)
             {
-                var tp = new TicketPriority();
-                tp.Name = priority;
-                context.TicketPriorities.Add(tp);
-                context.SaveChanges();
+                if (!context.TicketPriorities.Any(r => r.Name == priority))
+                {
+                    var tp = new TicketPriority();
+                    tp.Name = priority;
+                    context.TicketPriorities.Add(tp);
+                    context.SaveChanges();
+                }
             }
 
             List<string> ticketTypes = new List<string> { "Error report", "Feature request", "Service request", "Other" };
             foreach (var type in ticketTypes)
             {
-                var tt = new TicketType();
-                tt.Name = type;
-                context.TicketTypes.Add(tt);
-                context.SaveChanges();
+                if (!context.TicketTypes.Any(r => r.Name == type))
+                {
+                    var tt = new TicketType();
+                    tt.Name = type;
+                    context.TicketTypes.Add(tt);
+                    context.SaveChanges();
+                }
             }
 
         }

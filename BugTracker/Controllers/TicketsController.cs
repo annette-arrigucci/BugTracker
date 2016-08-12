@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -36,9 +37,15 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize]
         public ActionResult Create()
         {
-            return View();
+            var ticketView = new TicketViewModel();
+            ticketView.Projects = new SelectList(db.Projects, "Id", "Name");
+            ticketView.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name");
+            ticketView.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name");
+            //ticketView.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name");
+            return View(ticketView);
         }
 
         // POST: Tickets/Create
@@ -46,16 +53,27 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketViewModel tvm)
         {
             if (ModelState.IsValid)
             {
+                var ticket = new Ticket();
+                ticket.Title = tvm.Title;
+                ticket.Description = tvm.Description;
+                ticket.Created = DateTimeOffset.Now;
+                ticket.ProjectId = tvm.SelectedProject;
+                ticket.TicketTypeId = tvm.SelectedType;
+                ticket.TicketPriorityId = tvm.SelectedPriority;
+                var query = from p in db.TicketStatuses
+                            where p.Name == "New"
+                            select p.Id;
+                ticket.TicketStatusId = query.First();
+                ticket.OwnerUserId = User.Identity.GetUserId();
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            return View(ticket);
+            return View(tvm);
         }
 
         // GET: Tickets/Edit/5

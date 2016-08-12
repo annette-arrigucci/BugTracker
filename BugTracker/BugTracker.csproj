@@ -197,6 +197,7 @@
     <Compile Include="Models\AdminUserViewModel.cs" />
     <Compile Include="Models\ProjectUserHelper.cs" />
     <Compile Include="Models\ProjectUserViewModel.cs" />
+    <Compile Include="Models\TicketViewModel.cs" />
     <Compile Include="Models\UserInfoViewModel.cs" />
     <Compile Include="Models\UserRolesHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
