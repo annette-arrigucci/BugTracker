@@ -48,21 +48,21 @@ namespace BugTracker.Controllers
             Ticket ticket = db.Tickets.Find(id);
             var model = new TicketAssignViewModel();
             model.Ticket = ticket;
-            //if(!string.IsNullOrEmpty(ticket.AssignedToUserId))
-            //{
-            //    model.SelectedUser = ticket.AssignedToUserId;
-            //}
+            if(!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+                model.SelectedUser = ticket.AssignedToUserId;
+            }
             var helper = new ProjectUserHelper();
             var userIDList = helper.UsersInProject(ticket.ProjectId);
             var userInfoList = helper.getUserInfo(userIDList);
-            //if (!string.IsNullOrEmpty(model.SelectedUser))
-            //{
-            //    model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
-            //}
-            //else
-            //{
+            if (!string.IsNullOrEmpty(model.SelectedUser))
+            {
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
+            }
+            else
+            {
                 model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName");
-            //}
+            }
             if (ticket == null)
             {
                 return HttpNotFound();
@@ -78,12 +78,15 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 var ticket = db.Tickets.Find(tId);
-                ticket.AssignedToUserId = SelectedUser;
-                var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
-
-                db.TicketNotifications.Add(tn);
-                db.Entry(ticket).State = EntityState.Modified;
-                db.SaveChanges();
+                //if user is not already assigned to ticket, assign it to them
+                if (!(ticket.AssignedToUserId.Equals(SelectedUser)))
+                {
+                    ticket.AssignedToUserId = SelectedUser;
+                    var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
+                    db.TicketNotifications.Add(tn);
+                    db.Entry(ticket).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
             else
