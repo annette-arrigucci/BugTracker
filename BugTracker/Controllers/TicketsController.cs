@@ -16,12 +16,39 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Tickets
+        [Authorize]
         public ActionResult Index()
         {
+            var id = User.Identity.GetUserId();
+            if (User.IsInRole("Admin"))
+            {
+                return View(db.Tickets.ToList());
+            }
+            if (User.IsInRole("Project Manager"))
+            {
+                var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
+                var projects = query.ToList();
+                var ticketList = new List<Ticket>();
+                if (projects.Count > 0)
+                { 
+                    foreach (Project p in projects)
+                    {
+                        var projTickets = p.Tickets;
+                        ticketList.AddRange(projTickets);
+                    }
+                }
+                return View(ticketList);
+            }
+            if (User.IsInRole("Developer"))
+            {
+                var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
+                return View(tickets.ToList());
+            }
             return View(db.Tickets.ToList());
         }
 
         // GET: Tickets/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -78,16 +105,22 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 var ticket = db.Tickets.Find(tId);
-                //if user is not already assigned to ticket, assign it to them
-                if (!(ticket.AssignedToUserId.Equals(SelectedUser)))
+                //if there is already a user assigned, check if it is the same user
+                //if it is, we won't create another ticket notification
+                if (ticket.AssignedToUserId != null && ticket.AssignedToUserId.Equals("Selected User"))
                 {
+                        return RedirectToAction("Index");
+                }
+                //otherwise, update the ticket and create an entry in ticket notification table
+                else
+                { 
                     ticket.AssignedToUserId = SelectedUser;
                     var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
                     db.TicketNotifications.Add(tn);
                     db.Entry(ticket).State = EntityState.Modified;
                     db.SaveChanges();
-                }
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                } 
             }
             else
             {
@@ -135,6 +168,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Edit/5
+        [Authorize( Roles = "Developer, Project Manager, Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -202,6 +236,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
