@@ -73,15 +73,13 @@ namespace BugTracker.Controllers
         // POST: Tickets/AssignUser/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AssignUser([Bind(Include = "Ticket,SelectedUser")] TicketAssignViewModel tavModel)
+        public ActionResult AssignUser(int tId, string SelectedUser)
         {
             if (ModelState.IsValid)
             {
-                var id = tavModel.Ticket.Id;
-                var selected = tavModel.SelectedUser;
-                var ticket = db.Tickets.Find(id);
-                ticket.AssignedToUserId = selected;
-                var tn = new TicketNotification { TicketId = id, UserId = selected };
+                var ticket = db.Tickets.Find(tId);
+                ticket.AssignedToUserId = SelectedUser;
+                var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
 
                 db.TicketNotifications.Add(tn);
                 db.Entry(ticket).State = EntityState.Modified;
@@ -90,7 +88,7 @@ namespace BugTracker.Controllers
             }
             else
             {
-                return View(tavModel);
+                return RedirectToAction("AssignUser", new { id = tId });
             }
         }
         // GET: Tickets/Create
