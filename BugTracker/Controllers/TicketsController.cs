@@ -44,7 +44,12 @@ namespace BugTracker.Controllers
                 var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
                 return View(tickets.ToList());
             }
-            return View(db.Tickets.ToList());
+            if (User.IsInRole("Submitter"))
+            {
+                var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
+                return View(tickets.ToList());
+            }
+            return RedirectToAction("Index", "Home", null);
         }
 
         // GET: Tickets/Details/5
