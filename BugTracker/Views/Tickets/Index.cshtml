@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BugTracker.Models.Ticket>
+﻿@model IEnumerable<BugTracker.Models.TicketDetailsViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -24,22 +24,22 @@
             @Html.DisplayNameFor(model => model.Updated)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProjectId)
+            @Html.DisplayNameFor(model => model.ProjectTitle)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TicketTypeId)
+            @Html.DisplayNameFor(model => model.TicketType)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TicketPriorityId)
+            @Html.DisplayNameFor(model => model.TicketPriority)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TicketStatusId)
+            @Html.DisplayNameFor(model => model.TicketStatus)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OwnerUserId)
+            @Html.DisplayNameFor(model => model.OwnerName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AssignedToUserId)
+            @Html.DisplayNameFor(model => model.AssignedToUserName)
         </th>
         <th></th>
     </tr>
@@ -59,22 +59,22 @@
             @Html.DisplayFor(modelItem => item.Updated)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ProjectId)
+            @Html.DisplayFor(modelItem => item.ProjectTitle)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TicketTypeId)
+            @Html.DisplayFor(modelItem => item.TicketType)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TicketPriorityId)
+            @Html.DisplayFor(modelItem => item.TicketPriority)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TicketStatusId)
+            @Html.DisplayFor(modelItem => item.TicketStatus)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.OwnerUserId)
+            @Html.DisplayFor(modelItem => item.OwnerName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.AssignedToUserId)
+            @Html.DisplayFor(modelItem => item.AssignedToUserName)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

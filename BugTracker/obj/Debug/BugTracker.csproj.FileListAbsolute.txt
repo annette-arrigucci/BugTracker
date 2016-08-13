@@ -71,4 +71,3 @@ C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Twitter.x
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Debug\BugTracker.dll
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Debug\BugTracker.pdb
-C:\Users\Me\projects\BugTracker\BugTracker\obj\Debug\BugTracker.csprojResolveAssemblyReference.cache

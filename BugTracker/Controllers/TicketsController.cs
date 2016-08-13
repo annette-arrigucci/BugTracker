@@ -22,7 +22,8 @@ namespace BugTracker.Controllers
             var id = User.Identity.GetUserId();
             if (User.IsInRole("Admin"))
             {
-                return View(db.Tickets.ToList());
+                var ticketDetailsList = transformTickets(db.Tickets.ToList());
+                return View(ticketDetailsList);
             }
             if (User.IsInRole("Project Manager"))
             {
@@ -37,17 +38,20 @@ namespace BugTracker.Controllers
                         ticketList.AddRange(projTickets);
                     }
                 }
-                return View(ticketList);
+                var ticketDetailsList = transformTickets(ticketList);
+                return View(ticketDetailsList);
             }
             if (User.IsInRole("Developer"))
             {
                 var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
-                return View(tickets.ToList());
+                var ticketDetailsList = transformTickets(tickets.ToList());
+                return View(ticketDetailsList);
             }
             if (User.IsInRole("Submitter"))
             {
                 var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
-                return View(tickets.ToList());
+                var ticketDetailsList = transformTickets(tickets.ToList());
+                return View(ticketDetailsList);
             }
             return RedirectToAction("Index", "Home", null);
         }
@@ -274,6 +278,17 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public List<TicketDetailsViewModel> transformTickets(List<Ticket> ticketList)
+        {
+            var ticketDetailsList = new List<TicketDetailsViewModel>();
+            foreach (var ticket in ticketList)
+            {
+                var tdTicket = new TicketDetailsViewModel(ticket);
+                ticketDetailsList.Add(tdTicket);
+            }
+            return ticketDetailsList;
         }
     }
 }

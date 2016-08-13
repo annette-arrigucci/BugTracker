@@ -198,6 +198,7 @@
     <Compile Include="Models\ProjectUserHelper.cs" />
     <Compile Include="Models\ProjectUserViewModel.cs" />
     <Compile Include="Models\TicketAssignViewModel.cs" />
+    <Compile Include="Models\TicketDetailsViewModel.cs" />
     <Compile Include="Models\TicketEditViewModel.cs" />
     <Compile Include="Models\TicketCreateViewModel.cs" />
     <Compile Include="Models\UserInfoViewModel.cs" />
