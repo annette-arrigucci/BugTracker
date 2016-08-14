@@ -20,12 +20,13 @@ namespace BugTracker.Controllers
         public ActionResult Index()
         {
             var id = User.Identity.GetUserId();
+            var ticketDetailsList = new List<TicketDetailsViewModel>();
             if (User.IsInRole("Admin"))
             {
-                var ticketDetailsList = transformTickets(db.Tickets.ToList());
+                ticketDetailsList = transformTickets(db.Tickets.ToList());
                 return View(ticketDetailsList);
             }
-            if (User.IsInRole("Project Manager"))
+            else if (User.IsInRole("Project Manager"))
             {
                 var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
                 var projects = query.ToList();
@@ -38,22 +39,22 @@ namespace BugTracker.Controllers
                         ticketList.AddRange(projTickets);
                     }
                 }
-                var ticketDetailsList = transformTickets(ticketList);
-                return View(ticketDetailsList);
+                var pmTicketDetailsList = transformTickets(ticketList);
+                ticketDetailsList.AddRange(pmTicketDetailsList);
             }
             if (User.IsInRole("Developer"))
             {
                 var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
-                var ticketDetailsList = transformTickets(tickets.ToList());
-                return View(ticketDetailsList);
+                var devDetailsList = transformTickets(tickets.ToList());
+                ticketDetailsList.AddRange(devDetailsList);
             }
             if (User.IsInRole("Submitter"))
             {
                 var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
-                var ticketDetailsList = transformTickets(tickets.ToList());
-                return View(ticketDetailsList);
+                var subDetailsList = transformTickets(tickets.ToList());
+                ticketDetailsList.AddRange(subDetailsList);
             }
-            return RedirectToAction("Index", "Home", null);
+            return View(ticketDetailsList);
         }
 
         // GET: Tickets/Details/5
@@ -82,9 +83,10 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ticket ticket = db.Tickets.Find(id);
             var model = new TicketAssignViewModel();
-            model.Ticket = ticket;
+            Ticket ticket = db.Tickets.Find(id);
+            model.TicketDetails = new TicketDetailsViewModel(ticket);
+            
             if(!string.IsNullOrEmpty(ticket.AssignedToUserId))
             {
                 model.SelectedUser = ticket.AssignedToUserId;
@@ -204,8 +206,16 @@ namespace BugTracker.Controllers
                 ticketEdit.SelectedType = ticket.TicketTypeId;
                 ticketEdit.SelectedPriority = ticket.TicketPriorityId;
                 ticketEdit.SelectedStatus = ticket.TicketStatusId;
-                ticketEdit.OwnerUserId = ticket.OwnerUserId;
-                ticketEdit.AssignedToUserId = ticket.AssignedToUserId;
+                //ticketEdit.OwnerUserId = ticket.OwnerUserId;
+                if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+                {
+                    var assignedTo = db.Users.Find(ticket.AssignedToUserId);
+                    ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
+                }
+                else
+                {
+                    ticketEdit.AssignedToUserName = "Unassigned";
+                }
 
                 ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
                 ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
@@ -222,7 +232,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,SelectedProject,SelectedType,SelectedPriority,SelectedStatus,OwnerUserId,AssignedToUserId")] TicketEditViewModel tevModel)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,SelectedProject,SelectedType,SelectedPriority,SelectedStatus")] TicketEditViewModel tevModel)
         {
             if (ModelState.IsValid)
             {
@@ -235,8 +245,8 @@ namespace BugTracker.Controllers
                 ticket.TicketTypeId = tevModel.SelectedType;
                 ticket.TicketPriorityId = tevModel.SelectedPriority;
                 ticket.TicketStatusId = tevModel.SelectedStatus;
-                ticket.OwnerUserId = tevModel.OwnerUserId;
-                ticket.AssignedToUserId = tevModel.AssignedToUserId;
+                //ticket.OwnerUserId = tevModel.OwnerUserId;
+                //ticket.AssignedToUserId = tevModel.AssignedToUserId;
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();

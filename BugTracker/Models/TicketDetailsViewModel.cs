@@ -49,7 +49,7 @@ namespace BugTracker.Models
             }
             else
             {
-                this.AssignedToUserName = ticket.AssignedToUserId;
+                this.AssignedToUserName = "Unassigned";
             }
         }
 
