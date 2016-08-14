@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
 namespace BugTracker.Models
 {
+    //this is a class to display ticket information to a user
     public class TicketDetailsViewModel
     {
         public int Id { get; set; }
@@ -13,17 +15,17 @@ namespace BugTracker.Models
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset? Updated { get; set; }
-        //public int ProjectId { get; set; }
+        [Display(Name = "Project")]
         public string ProjectTitle { get; set; }
-        //public int TicketTypeId { get; set; }
+        [Display(Name = "Type")]
         public string TicketType { get; set; }
-        //public int TicketPriorityId { get; set; }
+        [Display(Name = "Priority")]
         public string TicketPriority { get; set; }
-        //public int TicketStatusId { get; set; }
+        [Display(Name = "Status")]
         public string TicketStatus { get; set; }
-        //public string OwnerUserId { get; set; }
+        [Display(Name = "Owner")]
         public string OwnerName { get; set; }
-        //public string AssignedToUserId { get; set; }
+        [Display(Name = "Assigned To")]
         public string AssignedToUserName { get; set; }
         public ApplicationDbContext db = new ApplicationDbContext();
 

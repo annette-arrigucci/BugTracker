@@ -69,7 +69,8 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(ticket);
+            var model = new TicketDetailsViewModel(ticket);
+            return View(model);
         }
 
 
