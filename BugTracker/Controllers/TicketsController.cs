@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Threading.Tasks;
 
 namespace BugTracker.Controllers
 {
@@ -21,11 +23,14 @@ namespace BugTracker.Controllers
         {
             var id = User.Identity.GetUserId();
             var ticketDetailsList = new List<TicketDetailsViewModel>();
+            // if admin, view all tickets
             if (User.IsInRole("Admin"))
             {
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
                 return View(ticketDetailsList);
             }
+            //otherwise, go through each role a user can be in and add the tickets that can be viewed in each
+            //this does allow duplicates - tried Union but need to work on equality operator
             else if (User.IsInRole("Project Manager"))
             {
                 var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
@@ -123,14 +128,26 @@ namespace BugTracker.Controllers
                 {
                         return RedirectToAction("Index");
                 }
-                //otherwise, update the ticket and create an entry in ticket notification table
+                //otherwise, 
+                //- update the ticket
+                //- create an entry in ticket notification table
+                //- send an email to the developer who has been assigned the ticket
+                //- if status is New, change to "Waiting for Support"
                 else
                 { 
                     ticket.AssignedToUserId = SelectedUser;
                     var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
                     db.TicketNotifications.Add(tn);
+
+                    //think of a way to change the status ID here without using the ID numbers - 
+                    //otherwise this is going to look very opaque to future developers
+
                     db.Entry(ticket).State = EntityState.Modified;
                     db.SaveChanges();
+
+                    var ticketTitle = ticket.Title;
+                    //SendNotificationEmail(SelectedUser, ticketTitle);
+
                     return RedirectToAction("Index");
                 } 
             }
@@ -139,6 +156,18 @@ namespace BugTracker.Controllers
                 return RedirectToAction("AssignUser", new { id = tId });
             }
         }
+
+        //public async Task<ActionResult> SendNotificationEmail(string userId, string ticketTitle)
+        //{
+        //    var callbackUrl = Url.Action("Index", "Tickets");
+        //    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+        //    await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
+            //
+            // Here we should direct the assigner to a confirmation page that says - the email was sent or the email was not sent
+            //return RedirectToAction("Index");
+            //not sure what to do here - I don't really want to return a redirect once the email is sent
+        //}
+
         // GET: Tickets/Create
         [Authorize]
         public ActionResult Create()
@@ -187,44 +216,62 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Ticket ticket = db.Tickets.Find(id);
+            var userId = User.Identity.GetUserId();
+            var helper = new ProjectUserHelper();
+
             if (ticket == null)
             {
                 return HttpNotFound();
             }
+
+            //verify that the user can edit this ticket - it is a ticket in one of their assigned projects
+            if(User.IsInRole("Project Manager"))
+            {
+                if(!helper.IsUserInProject(userId, ticket.ProjectId))
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+            //same for developer - verify that they have been assigned this ticket and can edit it
+            if (User.IsInRole("Developer"))
+            {
+                if(!ticket.AssignedToUserId.Equals(userId))
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+
+            var ticketEdit = new TicketEditViewModel();
+            ticketEdit.Id = ticket.Id;
+            ticketEdit.Title = ticket.Title;
+            ticketEdit.Created = ticket.Created;
+            ticketEdit.Updated = ticket.Updated;
+            ticketEdit.Description = ticket.Description;
+                
+            //setting the default selected values of the TicketEditViewModel to the current values in the ticket
+            ticketEdit.SelectedProject = ticket.ProjectId;
+            ticketEdit.SelectedType = ticket.TicketTypeId;
+            ticketEdit.SelectedPriority = ticket.TicketPriorityId;
+            ticketEdit.SelectedStatus = ticket.TicketStatusId;
+            //ticketEdit.OwnerUserId = ticket.OwnerUserId;
+            if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+               var assignedTo = db.Users.Find(ticket.AssignedToUserId);
+               ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
+            }
             else
             {
-                var ticketEdit = new TicketEditViewModel();
-                ticketEdit.Id = ticket.Id;
-                ticketEdit.Title = ticket.Title;
-                ticketEdit.Created = ticket.Created;
-                ticketEdit.Updated = ticket.Updated;
-                ticketEdit.Description = ticket.Description;
-                
-                //setting the default selected values of the TicketEditViewModel to the current values in the ticket
-                ticketEdit.SelectedProject = ticket.ProjectId;
-                ticketEdit.SelectedType = ticket.TicketTypeId;
-                ticketEdit.SelectedPriority = ticket.TicketPriorityId;
-                ticketEdit.SelectedStatus = ticket.TicketStatusId;
-                //ticketEdit.OwnerUserId = ticket.OwnerUserId;
-                if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
-                {
-                    var assignedTo = db.Users.Find(ticket.AssignedToUserId);
-                    ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
-                }
-                else
-                {
-                    ticketEdit.AssignedToUserName = "Unassigned";
-                }
-
-                ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
-                ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
-                ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.SelectedPriority);//ticket.TicketPriorityId
-                ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.SelectedStatus);//ticket.TicketStatusId
-
-                return View(ticketEdit);
+               ticketEdit.AssignedToUserName = "Unassigned";
             }
-            
+
+            ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
+            ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
+            ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.SelectedPriority);//ticket.TicketPriorityId
+            ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.SelectedStatus);//ticket.TicketStatusId
+
+            return View(ticketEdit);         
         }
 
         // POST: Tickets/Edit/5
