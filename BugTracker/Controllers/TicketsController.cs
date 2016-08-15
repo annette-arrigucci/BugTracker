@@ -10,6 +10,8 @@ using BugTracker.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
+using PagedList;
+using PagedList.Mvc;
 
 namespace BugTracker.Controllers
 {
@@ -144,14 +146,15 @@ namespace BugTracker.Controllers
 
                     //think of a way to change the status ID here without using the ID numbers - 
                     //otherwise this is going to look very opaque to future developers
+                    UpdateTicketStatusIfNew(tId);
 
                     db.Entry(ticket).State = EntityState.Modified;
                     db.SaveChanges();
 
                     var ticketTitle = ticket.Title;
-                    //SendNotificationEmail(SelectedUser, ticketTitle);
+                    SendNotificationEmail(SelectedUser, ticketTitle);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("ConfirmAssignment");
                 } 
             }
             else
@@ -160,16 +163,32 @@ namespace BugTracker.Controllers
             }
         }
 
-        //public async Task<ActionResult> SendNotificationEmail(string userId, string ticketTitle)
-        //{
-        //    var callbackUrl = Url.Action("Index", "Tickets");
-        //    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-        //    await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
-            //
+        public async Task SendNotificationEmail(string userId, string ticketTitle)
+        {
+            var callbackUrl = Url.Action("Index", "Tickets");
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
+            
             // Here we should direct the assigner to a confirmation page that says - the email was sent or the email was not sent
             //return RedirectToAction("Index");
             //not sure what to do here - I don't really want to return a redirect once the email is sent
-        //}
+        }
+
+        public void UpdateTicketStatusIfNew(int tId)
+        {
+            var ticket = db.Tickets.Find(tId);
+            var status = db.TicketStatuses.Find(ticket.TicketStatusId);
+            if(status.Name == "New")
+            {
+                var newStatus = db.TicketStatuses.FirstOrDefault(x => x.Name == "Waiting for support");
+                ticket.TicketStatusId = newStatus.Id;
+            }
+        }
+
+        public ActionResult ConfirmAssignment()
+        {
+            return View();
+        }
 
         // GET: Tickets/Create
         [Authorize]

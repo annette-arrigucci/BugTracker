@@ -57,6 +57,10 @@ namespace BugTracker.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            //So that the user can be referred back to where they were when they click logon
+            if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
+                returnUrl = Server.UrlEncode(Request.UrlReferrer.PathAndQuery);
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -73,17 +77,22 @@ namespace BugTracker.Controllers
                 return View(model);
             }
 
+            //returnURL needs to be decoded
+            string decodedUrl = "";
+            if (!string.IsNullOrEmpty(returnUrl))
+                decodedUrl = Server.UrlDecode(returnUrl);
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(decodedUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("SendCode", new { ReturnUrl = decodedUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
