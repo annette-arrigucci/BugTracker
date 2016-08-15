@@ -1,4 +1,5 @@
 ﻿@model BugTracker.Models.Project
+@using BugTracker.Models
 
 @{
     ViewBag.Title = "Details";
@@ -27,7 +28,18 @@
 
     </dl>
 </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+    {
+        @Html.ActionLink("Edit Project Details", "Edit", new { id = Model.Id })
+    }
+    <br /><br />
+    @{ 
+        var myHelper = new ProjectUserHelper();
+        var userList = myHelper.UsersInProject(Model.Id);
+        var userInfoList = myHelper.getUserInfo(userList);
+    }
+    @Html.Partial("_ShowProjectUsers", userInfoList, new ViewDataDictionary { { "projectId", Model.Id } })
+    <br /><br />
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Projects List", "Index")
 </p>

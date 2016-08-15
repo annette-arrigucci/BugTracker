@@ -5,3 +5,7 @@
 texarea {
     width: 100% !important;
 }
+
+.not-editable {
+    margin-top: 7px !important;
+}

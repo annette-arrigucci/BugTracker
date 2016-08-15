@@ -26,7 +26,9 @@ namespace BugTracker.Controllers
             // if admin, view all tickets
             if (User.IsInRole("Admin"))
             {
+                var tickets = db.Tickets;
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
+                ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
                 return View(ticketDetailsList);
             }
             //otherwise, go through each role a user can be in and add the tickets that can be viewed in each
@@ -43,7 +45,7 @@ namespace BugTracker.Controllers
                         var projTickets = p.Tickets;
                         ticketList.AddRange(projTickets);
                     }
-                }
+                }             
                 var pmTicketDetailsList = transformTickets(ticketList);
                 ticketDetailsList.AddRange(pmTicketDetailsList);
             }
@@ -59,6 +61,7 @@ namespace BugTracker.Controllers
                 var subDetailsList = transformTickets(tickets.ToList());
                 ticketDetailsList.AddRange(subDetailsList);
             }
+            ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
             return View(ticketDetailsList);
         }
 
