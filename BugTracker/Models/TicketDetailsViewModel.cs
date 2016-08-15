@@ -81,6 +81,6 @@ namespace BugTracker.Models
         {
             var user = db.Users.Find(userId);
             return user.FirstName + " " + user.LastName;
-        } 
+        }
     }
 }

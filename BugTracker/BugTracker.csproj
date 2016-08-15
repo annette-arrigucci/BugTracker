@@ -53,6 +53,14 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SendGrid, Version=6.3.4.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
       <HintPath>..\packages\Sendgrid.6.3.4\lib\SendGrid.dll</HintPath>
       <Private>True</Private>
@@ -199,6 +207,7 @@
     <Compile Include="Models\ProjectUserViewModel.cs" />
     <Compile Include="Models\TicketAssignViewModel.cs" />
     <Compile Include="Models\TicketDetailsViewModel.cs" />
+    <Compile Include="Models\TicketDetailsViewModelComparer.cs" />
     <Compile Include="Models\TicketEditViewModel.cs" />
     <Compile Include="Models\TicketCreateViewModel.cs" />
     <Compile Include="Models\UserInfoViewModel.cs" />
@@ -225,6 +234,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\edit-roles.css" />
     <Content Include="Content\form-style.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
