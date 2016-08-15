@@ -168,9 +168,17 @@ namespace BugTracker.Controllers
 
         public async Task SendNotificationEmail(string userId, string ticketTitle)
         {
-            var callbackUrl = Url.Action("Index", "Tickets");
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-            await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
+            var callbackUrl = Url.Action("Index", "Tickets", null, "http", "aarrigucci-bugtracker.azurewebsites.net");
+            //var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            ApplicationUser user = db.Users.Find(userId);
+            var es = new EmailService();
+            es.SendAsync(new IdentityMessage
+            {
+                Destination = user.Email,
+                Subject = "New Ticket - " + ticketTitle,
+                Body = "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket."
+            });
+            //await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
             
             // Here we should direct the assigner to a confirmation page that says - the email was sent or the email was not sent
             //return RedirectToAction("Index");
