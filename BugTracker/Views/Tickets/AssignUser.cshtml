@@ -1,5 +1,7 @@
 ﻿@model BugTracker.Models.TicketAssignViewModel
 
+<link href="~/Content/form-style.css" rel="stylesheet">
+
 @{
     ViewBag.Title = "Assign ticket to user";
 }
@@ -7,7 +9,6 @@
 <h2>Assign ticket</h2>
 
 <div>
-    <h4>Ticket</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -98,21 +99,26 @@
         {
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.AntiForgeryToken()
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProjUsersList, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProjUsersList)
+                </dt>    
+                <dd>
                     @*@Html.DropDownList("SelectedUser", Model.ProjUsersList)*@
-                    @Html.DropDownListFor(model => model.SelectedUser, Model.ProjUsersList, "-Select User-")
+                    @Html.DropDownListFor(model => model.SelectedUser, Model.ProjUsersList, "-Select User-", new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.SelectedUser, "", new { @class = "text-danger" })
-                </div>
-            
-                <div class="col-md-2">
+                </dd>    
+                <dt></dt>
+                <dd>
                     <input type="submit" value="Assign Ticket to User" class="btn btn-default" />
-                </div>
-            </div>
+                </dd>
+           </dl>
         }
 </div>
 <p>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Ticket Edit", "Edit", new {id = Model.TicketDetails.Id })
+</p>
+<p>
+    @Html.ActionLink("Back to Tickets", "Index")
 </p>
 
