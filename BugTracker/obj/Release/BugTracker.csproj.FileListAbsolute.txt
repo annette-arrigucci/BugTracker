@@ -72,3 +72,7 @@ C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Microsoft
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Release\BugTracker.dll
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Release\BugTracker.pdb
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Release\BugTracker.csprojResolveAssemblyReference.cache
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.dll
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.dll
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.xml
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.xml

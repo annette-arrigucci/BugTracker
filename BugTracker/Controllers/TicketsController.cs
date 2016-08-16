@@ -10,8 +10,8 @@ using BugTracker.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
-using PagedList;
-using PagedList.Mvc;
+//using PagedList;
+//using PagedList.Mvc;
 
 namespace BugTracker.Controllers
 {
@@ -25,8 +25,8 @@ namespace BugTracker.Controllers
         {
             var id = User.Identity.GetUserId();
             var ticketDetailsList = new List<TicketDetailsViewModel>();
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
+            //int pageSize = 10;
+            //int pageNumber = (page ?? 1);
 
             // if admin, view all tickets
             if (User.IsInRole("Admin"))
@@ -34,7 +34,7 @@ namespace BugTracker.Controllers
                 var tickets = db.Tickets;
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
                 ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
-                return View(ticketDetailsList.ToPagedList(pageNumber, pageSize));
+                return View(ticketDetailsList);
             }
             //otherwise, go through each role a user can be in and add the tickets that can be viewed in each
             //this does allow duplicates - tried Union but need to work on equality operator
@@ -67,7 +67,7 @@ namespace BugTracker.Controllers
                 ticketDetailsList.AddRange(subDetailsList);
             }
             ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
-            return View(ticketDetailsList.ToPagedList(pageNumber, pageSize));
+            return View(ticketDetailsList);
         }
 
         // GET: Tickets/Details/5
@@ -168,7 +168,7 @@ namespace BugTracker.Controllers
 
         public async Task SendNotificationEmail(string userId, string ticketTitle)
         {
-            var callbackUrl = Url.Action("Index", "Tickets", null, "http", "aarrigucci-bugtracker.azurewebsites.net");
+            var url = "http://aarrigucci-bugtracker.azurewebsites.net/tickets";
             //var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
             ApplicationUser user = db.Users.Find(userId);
             var es = new EmailService();
@@ -176,7 +176,7 @@ namespace BugTracker.Controllers
             {
                 Destination = user.Email,
                 Subject = "New Ticket - " + ticketTitle,
-                Body = "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket."
+                Body = "You have been assigned a new ticket. Click <a href=\"" + url + "\">here</a> to view your assigned ticket."
             });
             //await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
             
