@@ -32,6 +32,8 @@ C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Twitter.d
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Web.Infrastructure.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Newtonsoft.Json.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Owin.dll
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.dll
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\SendGrid.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\SendGrid.SmtpApi.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\SendGridMail.dll
@@ -46,6 +48,8 @@ C:\Users\Me\projects\BugTracker\BugTracker\bin\System.Web.WebPages.Razor.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\WebGrease.dll
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Newtonsoft.Json.xml
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.xml
+C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.xml
 C:\Users\Me\projects\BugTracker\BugTracker\bin\System.Net.Http.Formatting.xml
 C:\Users\Me\projects\BugTracker\BugTracker\bin\System.Web.Helpers.xml
 C:\Users\Me\projects\BugTracker\BugTracker\bin\System.Web.Mvc.xml
@@ -71,7 +75,3 @@ C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Twitter.x
 C:\Users\Me\projects\BugTracker\BugTracker\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Debug\BugTracker.dll
 C:\Users\Me\projects\BugTracker\BugTracker\obj\Debug\BugTracker.pdb
-C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.dll
-C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.dll
-C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.xml
-C:\Users\Me\projects\BugTracker\BugTracker\bin\PagedList.Mvc.xml

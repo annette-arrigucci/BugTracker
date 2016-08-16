@@ -1,15 +1,8 @@
-﻿@*@using PagedList;
-@using PagedList.Mvc;*@
+﻿@model List<BugTracker.Models.TicketDetailsViewModel>
 
-@*<link href="~/Content/PagedList.css" rel="stylesheet">*@
+@*<link rel="stylesheet" type="text/css" href="~/Content/jquery.dataTables.min.css">*@
 
-
-
-
-@model List<BugTracker.Models.TicketDetailsViewModel>
-
-<link rel="stylesheet" type="text/css" href="~/Content/css/jquery.dataTables.css">
-
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 
 @*@{
     ViewBag.Title = "Tickets";
@@ -122,14 +115,9 @@
 @section scripts {
     <script type="text/javascript" charset="utf8" src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" charset="utf8" src="~/Scripts/jquery.dataTables.min.js"></script>
-
     <script>
         $(document).ready(function () {
             $('#tickets-table').DataTable();
         });
     </script>
 }
-
-@*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
-
-
